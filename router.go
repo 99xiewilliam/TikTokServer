@@ -1,7 +1,8 @@
 package main
 
 import (
-	"github.com/RaymondCode/simple-demo/controller"
+	"github.com/TikTokServer/controller"
+	"github.com/TikTokServer/middleware"
 	"github.com/gin-gonic/gin"
 )
 
@@ -10,12 +11,19 @@ func initRouter(r *gin.Engine) {
 	r.Static("/static", "./public")
 
 	apiRouter := r.Group("/douyin")
+	userRouter := apiRouter.Group("user")
+
+	// user group
+	authMiddleware, err := middleware.JwtMiddlewareInit()
+	if err != nil {
+		panic(err)
+	}
+	userRouter.GET("/", authMiddleware.MiddlewareFunc(), controller.UserInfo)
+	userRouter.POST("/register/", controller.Register)
+	userRouter.POST("/login/", authMiddleware.LoginHandler)
 
 	// basic apis
 	apiRouter.GET("/feed/", controller.Feed)
-	apiRouter.GET("/user/", controller.UserInfo)
-	apiRouter.POST("/user/register/", controller.Register)
-	apiRouter.POST("/user/login/", controller.Login)
 	apiRouter.POST("/publish/action/", controller.Publish)
 	apiRouter.GET("/publish/list/", controller.PublishList)
 
