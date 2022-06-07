@@ -125,6 +125,7 @@ func (d *Dao) GetPubById(ctx context.Context, userId, authorId int64) (*video.Vi
 	rows, err := d.db.Table("tb_video").
 		Select("tb_video.id as id, play_url, cover_url, favorite_count, comment_count, title, tb_user.id as aid, username as name, follow_count, follower_count").
 		Joins("join tb_user on tb_video.aid=tb_user.id").
+		Where("tb_video.aid = ?", authorId).
 		Rows()
 	defer rows.Close()
 	if err != nil {

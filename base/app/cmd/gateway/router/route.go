@@ -17,12 +17,13 @@ func InitRouter(middlewares ...gin.HandlerFunc) *gin.Engine {
 
 	g := router.Group("/douyin")
 	{
-		g.POST("/user/login/", controller.Login)
-		g.GET("/user/", controller.UserInfo)
+		//g.POST("/user/login/", controller.Login)
+		//g.GET("/user/", controller.UserInfo)
 		g.GET("/feed", controller.Feed)
 		g.Use(middleware.JwtAuth())
 		g.POST("/publish/action/", controller.PubAction)
 		g.GET("/publish/list/", controller.PubList)
+		//g.GET("/favorite/list/", controller.FavoriteList)
 	}
 
 	return router

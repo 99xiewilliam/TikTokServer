@@ -23,7 +23,6 @@ func Feed(c *gin.Context) {
 	userId = middleware.GetUserId(c)
 
 	latestTimeStr := c.Query("latest_time")
-	_ = c.Query("token")
 	latestTime, err = strconv.ParseInt(latestTimeStr, 10, 64)
 	if err != nil {
 		latestTime = 0
@@ -124,13 +123,17 @@ func PubList(c *gin.Context) {
 	userId = value.(int64)
 
 	str := c.Query("user_id")
-	authorId, err = strconv.ParseInt(str, 10, 64)
-	if err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"status_code": errno.ParamErrCode,
-			"status_msg":  "user_id格式错误",
-		})
-		return
+	if str == "" || str == "0" {
+		authorId = userId
+	} else {
+		authorId, err = strconv.ParseInt(str, 10, 64)
+		if err != nil {
+			c.JSON(http.StatusOK, gin.H{
+				"status_code": errno.ParamErrCode,
+				"status_msg":  "user_id格式错误",
+			})
+			return
+		}
 	}
 
 	ctx := context.Background()
@@ -152,7 +155,15 @@ func PubList(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status_code": errno.SuccessCode,
-		"status_msg":  "publish success",
+		"status_msg":  "success",
 		"video_list":  resp.VideoList.Videos,
 	})
 }
+
+//func FavoriteList(c *gin.Context) {
+//	c.JSON(http.StatusOK, gin.H{
+//		"status_code": errno.SuccessCode,
+//		"status_msg":  "success",
+//		"video_list":  []video.Video{},
+//	})
+//}

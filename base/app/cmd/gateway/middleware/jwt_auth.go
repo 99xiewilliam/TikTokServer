@@ -47,7 +47,7 @@ func parseToken(token string) (*AuthClaims, bool) {
 
 func JwtAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		tokenStr := c.GetHeader("Authorization")
+		tokenStr := c.Query("token")
 		if tokenStr == "" {
 			c.JSON(http.StatusOK, gin.H{
 				"status_code": errno.NeedLoginErrCode,
@@ -79,7 +79,7 @@ func JwtAuth() gin.HandlerFunc {
 }
 
 func GetUserId(c *gin.Context) int64 {
-	token := c.GetHeader("Authorization")
+	token := c.Query("token")
 	if claims, ok := parseToken(token); ok {
 		return claims.UserId
 	} else {
